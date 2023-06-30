@@ -31,25 +31,31 @@ export default class World extends EventEmitter {
             this.wolf.model.position.y = -7.3;
 
             // Sphere Object
-            this.sphere = new Objects(
+            this.sphere = new Objects();
+            this.sphere.addParticlesObject(
                 new THREE.IcosahedronGeometry(1, 10),
-                new THREE.MeshStandardMaterial({
-                    color: 0xff0000
+                new THREE.PointsMaterial({
+                    color: 0xff0000,
+                    size: .03
                 }),
-                'sphere'
-            );
-            this.sphere.object.position.set(5, 2, 0)
+            )
+            this.sphere.addObjectDebug('sphere')
+            this.sphere.object.position.set(5, 2, 0);
 
 
             // Cube Object
-            this.cube = new Objects(
+            this.cube = new Objects();
+            
+            this.cube.addMeshObject(
                 new THREE.BoxGeometry( 1.5, 1.5, 1.5 ),
                 new THREE.MeshBasicMaterial( {
                     color: 0x00ff00, 
                     wireframe: false 
                 }),
-                'cube'
-            );
+            )
+
+            this.sphere.addObjectDebug('cube')
+
             this.cube.object.position.set(-5, 2, 0)
             this.cube.object.rotation.set(1, 1, 1)
             

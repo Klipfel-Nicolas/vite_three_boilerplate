@@ -13,6 +13,8 @@ export default class Camera {
         this.createPerspectiveCamera(-5, 5, -9)
         this.setOrbitControls(this.canvas)
 
+        this.createGridHelper(50, 50, 'floorGrid', 0xffffff, 'grey', 6 )
+
     }
 
     /**
@@ -34,10 +36,7 @@ export default class Camera {
             this.debugPositionPerspectiveCamera.add(this.perspectiveCamera.position, 'x').min(- 25).max(50).step(.5).name('camera-X')
             this.debugPositionPerspectiveCamera.add(this.perspectiveCamera.position, 'y').min(- 25).max(50).step(.5).name('camera-Y')
             this.debugPositionPerspectiveCamera.add(this.perspectiveCamera.position, 'z').min(- 25).max(50).step(.5).name('camera-Z')
-        }
-        
-        //Grid Helper
-        this.createGridHelper(50, 50, 0xffffff, 'grey', 6 )
+        }        
     }
 
     /**
@@ -118,6 +117,7 @@ export default class Camera {
      * 
      * @param {number} size 
      * @param {number} divisions 
+     * @param {string} debugName  
      * @param {0xffffff} colorLinesCenter 
      * @param {string} colorLinesGrid 
      * @param {number} linewidth 
@@ -125,7 +125,8 @@ export default class Camera {
      */
     createGridHelper(
         size, 
-        divisions, 
+        divisions,
+        debugName,
         colorLinesCenter = 0xffffff, 
         colorLinesGrid = '', 
         linewidth = 1,
@@ -136,11 +137,21 @@ export default class Camera {
         const gridHelper = new THREE.GridHelper( size, divisions, colorLinesCenter, colorLinesGridThree );
         gridHelper.material.linewidth = linewidth;
         gridHelper.position.y = .1;
-        this.scene.add( gridHelper ); 
+        this.scene.add( gridHelper );
 
         const axesHelperThree = new THREE.AxesHelper( axesHelper );
         axesHelperThree.position.y = .2;
-        this.scene.add( axesHelperThree ); 
+        this.scene.add( axesHelperThree );
+
+        gridHelper.visible = axesHelperThree.visible = false
+        
+        //DEBUG
+        if(this.debug.active) {
+            this.gridDebug = this.debug.debugFolderHelper.addFolder(`${debugName}`);
+
+            this.gridDebug.add(gridHelper, 'visible').name('grid');
+            this.gridDebug.add(axesHelperThree, 'visible').name('axes');
+        }
     }
 
     //UPDATE

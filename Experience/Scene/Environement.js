@@ -42,6 +42,17 @@ export default class Environment {
        //Add light to the camera
        //this.experience.camera.perspectiveCamera.add(this.sunLight);
 
+       //Helper
+       const Sunhelper = new THREE.DirectionalLightHelper(
+            this.sunLight,
+            5,
+            "#dc3545"
+        );
+
+        this.scene.add(Sunhelper)
+        Sunhelper.visible = false;
+
+
         //Debug
         if(this.debug.active) {
             this.debugSunFolder = this.debug.debugFolderLight.addFolder(`directional${debugIndex}`)
@@ -64,17 +75,12 @@ export default class Environment {
             //Shadow
             this.debugShadowFolder.add(this.sunLight.shadow, 'bias').min(-0.009).max(0).step(.001).name('bias')
             this.debugShadowFolder.add(this.sunLight.shadow, 'radius').min(0.5).max(5).step(.1).name('radius')
+
+            //Helper
+            this.debug.debugFolderHelper.add(Sunhelper, 'visible').name('sunHelper');
+
         }
 
-        //Helper
-        const Sunhelper = new THREE.DirectionalLightHelper(
-                this.sunLight,
-                5,
-                "#dc3545"
-            );
-
-        this.scene.add(Sunhelper)
-  
     }
 
 
@@ -129,11 +135,17 @@ export default class Environment {
         this.ambiantLight = new THREE.AmbientLight( color, intensity )
         this.experience.camera.perspectiveCamera.add(this.ambiantLight)
 
-        this.debugAmbientFolder = this.debug.debugFolderLight.addFolder('ambiant')
+        
 
-        let ambiantColor = {color: color}
-        this.debugAmbientFolder.addColor(ambiantColor, 'color').onChange(()=>this.ambiantLight.color.set(ambiantColor.color));
-        this.debugAmbientFolder.add(this.ambiantLight, 'intensity').min(0).max(10).step(.1).name('intensity')
+        //Debug
+        if(this.debug.active) {
+            this.debugAmbientFolder = this.debug.debugFolderLight.addFolder('ambiant')
+            
+            let ambiantColor = {color: color}
+            this.debugAmbientFolder.addColor(ambiantColor, 'color').onChange(()=>this.ambiantLight.color.set(ambiantColor.color));
+            this.debugAmbientFolder.add(this.ambiantLight, 'intensity').min(0).max(10).step(.1).name('intensity')  
+        }
+        
     }
 
     /**

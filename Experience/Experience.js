@@ -46,8 +46,6 @@ export default class Experience {
         this.world.on("worldready", () => {
             const htmlLoader = document.querySelector('.loader');
             htmlLoader.classList.add("loaded");
-
-
         })
        
     }

@@ -17,6 +17,7 @@ export default class World extends EventEmitter {
         this.canvas = this.experience.canvas;
         this.camera = this.experience.camera;
         this.resources = this.experience.resources;
+        this.debug = this.experience.debug;
         
         // Start world (on ressource ready)
         this.resources.on("ready", ()=> {
@@ -26,7 +27,7 @@ export default class World extends EventEmitter {
             this.setFloor(50, 50, 0xffffff) 
 
             // Wolf
-            this.wolf = new Models(this.resources.items.wolf.scene);
+            this.wolf = new Models(this.resources.items.wolf.scene, "wolf");
             this.wolf.model.scale.set(.005, .005, .005);
             this.wolf.model.position.y = -7.3;
 
@@ -82,6 +83,13 @@ export default class World extends EventEmitter {
     
         this.plane.rotateX(Math.PI / 180 * 90);
         this.scene.add( this.plane );
+
+        // Position
+        this.debugFloor = this.debug.debugFolderObject.addFolder(`floor`)
+
+        this.debugFloor.add(this.plane.position, 'x').min(- 25).max(50).step(.1).name('object-X').listen();
+        this.debugFloor.add(this.plane.position, 'y').min(- 25).max(50).step(.1).name('object-Y').listen();
+        this.debugFloor.add(this.plane.position, 'z').min(- 25).max(50).step(.1).name('object-Z').listen();
     }
 
     //RESIZE

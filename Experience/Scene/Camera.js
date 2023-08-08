@@ -23,19 +23,19 @@ export default class Camera {
      * @param {Number} positionY 
      * @param {Number} positionZ 
      */
-    createPerspectiveCamera(positionX, positionY, positionZ) {
+    createPerspectiveCamera(positionX, positionY, positionZ, index=1) {
         this.perspectiveCamera = new THREE.PerspectiveCamera(75, this.sizes.aspect, 0.1, 100000)
         this.perspectiveCamera.position.set(positionX, positionY, positionZ)
         this.scene.add(this.perspectiveCamera)
 
         //Debug
         if(this.debug.active) {
-            this.debugPerspectiveCamera = this.debug.debugFolderCamera.addFolder('perspective')
+            this.debugPerspectiveCamera = this.debug.debugFolderCamera.addFolder(`perspective ${index}`)
             this.debugPositionPerspectiveCamera = this.debugPerspectiveCamera.addFolder('position')
 
-            this.debugPositionPerspectiveCamera.add(this.perspectiveCamera.position, 'x').min(- 25).max(50).step(.5).name('camera-X')
-            this.debugPositionPerspectiveCamera.add(this.perspectiveCamera.position, 'y').min(- 25).max(50).step(.5).name('camera-Y')
-            this.debugPositionPerspectiveCamera.add(this.perspectiveCamera.position, 'z').min(- 25).max(50).step(.5).name('camera-Z')
+            this.debugPositionPerspectiveCamera.add(this.perspectiveCamera.position, 'x').min(- 20).max(20).step(.1).name('camera-X')
+            this.debugPositionPerspectiveCamera.add(this.perspectiveCamera.position, 'y').min(- 20).max(20).step(.1).name('camera-Y')
+            this.debugPositionPerspectiveCamera.add(this.perspectiveCamera.position, 'z').min(- 20).max(20).step(.1).name('camera-Z')
         }        
     }
 
@@ -82,9 +82,10 @@ export default class Camera {
      * @param {object} renderer 
      * @param {boolean} enableDamping
      */
-    setOrbitControls(renderer, enableDamping = true, enableZoom = true)
+    setOrbitControls(renderer, enableControl = true, enableDamping = true, enableZoom = true)
     {
-        this.controls = new OrbitControls(this.perspectiveCamera, renderer)
+        this.controls = new OrbitControls(this.perspectiveCamera, renderer);
+        this.controls.enabled = enableControl;
         this.controls.enableDamping = enableDamping;
         this.controls.enableZoom = enableZoom;
     }
@@ -156,8 +157,9 @@ export default class Camera {
 
     //UPDATE
     update() {
-        this.controls.update(); 
+        if(this.controls) this.controls.update(); 
 
+        
         /* this.helper.matrixWorldNeedsUpdate = true;
         this.helper.update()
         this.helper.position.copy(this.orthographicCamera.position)

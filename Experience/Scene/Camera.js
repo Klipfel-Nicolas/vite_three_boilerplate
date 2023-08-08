@@ -1,17 +1,23 @@
 import * as THREE from 'three';
 import Experience from "../Experience";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
 
 export default class Camera {
-    constructor() {
+    
+    constructor(smoothZoom=false) {
         this.experience = new Experience();
         this.sizes = this.experience.sizes;
         this.scene = this.experience.scene;
         this.canvas = this.experience.canvas;
         this.debug = this.experience.debug;
+        this.smoothZoom = smoothZoom;
 
-        this.createPerspectiveCamera(-5, 5, -9)
-        this.setOrbitControls(this.canvas)
+        this.createPerspectiveCamera(-5, 5, -9) 
+        
+        this.setOrbitControls(this.canvas, !this.smoothZoom);
+    
+        if(this.smoothZoom) this.setTrackballControls(this.canvas)
 
         this.createGridHelper(50, 50, 'floorGrid', 0xffffff, 'grey', 6 )
 
@@ -82,12 +88,25 @@ export default class Camera {
      * @param {object} renderer 
      * @param {boolean} enableDamping
      */
-    setOrbitControls(renderer, enableControl = true, enableDamping = true, enableZoom = true)
+    setOrbitControls(renderer, enableZoom = true, enableControl = true,  enableDamping = true )
     {
+        console.log('enableZoom', enableZoom)
         this.controls = new OrbitControls(this.perspectiveCamera, renderer);
         this.controls.enabled = enableControl;
         this.controls.enableDamping = enableDamping;
         this.controls.enableZoom = enableZoom;
+    }
+
+    /**
+     * 
+     * @param {object} renderer 
+     */
+    setTrackballControls(renderer) {
+        this.trControls = new TrackballControls(this.perspectiveCamera, renderer);
+        this.trControls.noRotate = true;
+        this.trControls.noPan = true;
+        this.trControls.noZoom = false;
+        this.trControls.zoomSpeed = 1.5;
     }
 
     /**
@@ -157,8 +176,18 @@ export default class Camera {
 
     //UPDATE
     update() {
-        if(this.controls) this.controls.update(); 
 
+
+        if(this.controls) {
+            const target = this.controls.target;
+            this.controls.update();  
+
+            //Smooth zoom
+            if(this.trControls) {
+                this.trControls.target.set(target.x, target.y, target.z);
+                this.trControls.update()
+            } 
+        }
         
         /* this.helper.matrixWorldNeedsUpdate = true;
         this.helper.update()

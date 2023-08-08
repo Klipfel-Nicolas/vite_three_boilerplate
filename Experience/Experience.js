@@ -25,7 +25,7 @@ export default class Experience {
 
         this.sizes = new Sizes();
         this.scene = new THREE.Scene();
-        this.camera = new Camera();
+        this.camera = new Camera(true);
         this.resources = new Ressources(assets);
         this.world = new World();
         this.renderer = new Renderer();
